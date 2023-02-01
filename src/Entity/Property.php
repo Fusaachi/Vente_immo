@@ -2,14 +2,21 @@
 
 namespace App\Entity;
 
+
 use App\Repository\PropertyRepository;
+use Cocur\Slugify\Slugify;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Flex\Options;
 
-#[ORM\Entity(repositoryClass: PropertyRepository::class)]
+#[ORM\Entity(repositoryClass: "App\Repository\PropertyRepository")]
 class Property
 {
+    const HEAT = [
+        0 => 'Electrique',
+        1 => 'Gaz'
+    ];
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -69,6 +76,10 @@ class Property
         $this->title = $title;
 
         return $this;
+    }
+
+    public function getSlug():string{
+        return (new Slugify())->slugify($this->title);
     }
 
     public function getDescription(): ?string
@@ -198,6 +209,10 @@ class Property
         return $this;
     }
 
+        public function getHeatType():string 
+        {
+        return self::HEAT[$this->heat];
+        }
     public function getCreatedAt(): ?\DateTimeInterface
     {
         return $this->created_at;
@@ -206,6 +221,18 @@ class Property
     public function setCreatedAt(\DateTimeInterface $created_at): self
     {
         $this->created_at = $created_at;
+
+        return $this;
+    }
+
+    public function getRooms()
+    {
+        return $this->rooms;
+    }
+
+    public function setRooms($rooms)
+    {
+        $this->rooms = $rooms;
 
         return $this;
     }
